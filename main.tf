@@ -4,14 +4,14 @@ provider "aws" {
 
 //vpc
 module "aws_vpc" {
-  source = "../terraform-aws-vault-ent-starter/examples/aws-vpc"
+  source = "github.com/rogmanster/terraform-aws-vault-ent-starter/examples/aws-vpc"
 
   resource_name_prefix    = var.resource_name_prefix
 }
 
 //tls
 module "aws_acm" {
-  source = "../terraform-aws-vault-ent-starter/examples/aws-secrets-manager-acm"
+  source = "github.com/rogmanster/terraform-aws-vault-ent-starter/examples/aws-secrets-manager-acm"
 
   resource_name_prefix    = var.resource_name_prefix
   aws_lb_dns_name         = var.aws_lb_dns_name
@@ -20,7 +20,7 @@ module "aws_acm" {
 
 //vault
 module "aws_vault_ent" {
-  source = "../terraform-aws-vault-ent-starter"
+  source = "github.com/rogmanster/terraform-aws-vault-ent-starter"
 
   resource_name_prefix    = var.resource_name_prefix
   vault_license_filepath  = "/Users/rogman/workspaces/working/terraform-aws-vault-ent-starter/license.hclic"
@@ -56,7 +56,7 @@ module "aws_vault_ent" {
 
 //bastion
 module "bastion" {
-  source = "../terraform-aws-vault-ent-starter-bastion"
+  source = "github.com/rogmanster/terraform-aws-vault-ent-starter-bastion"
 
   bastion_count             = 2 #~node for benchmark-vault
   telemetry_count           = 1 #~should only be 1
