@@ -1,0 +1,73 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
+//vpc
+module "aws_vpc" {
+  source = "../terraform-aws-vault-ent-starter/examples/aws-vpc"
+
+  resource_name_prefix    = var.resource_name_prefix
+}
+
+//tls
+module "aws_acm" {
+  source = "../terraform-aws-vault-ent-starter/examples/aws-secrets-manager-acm"
+
+  resource_name_prefix    = var.resource_name_prefix
+  aws_lb_dns_name         = var.aws_lb_dns_name
+
+}
+
+//vault
+module "aws_vault_ent" {
+  source = "../terraform-aws-vault-ent-starter"
+
+  resource_name_prefix    = var.resource_name_prefix
+  vault_license_filepath  = "/Users/rogman/workspaces/working/terraform-aws-vault-ent-starter/license.hclic"
+  instance_type           = "m5.large"
+  node_count              = "3"
+  vault_version           = "1.9.4" #~1.10.0 not working apt-get install -y vault-enterprise=${vault_version}+ent
+  lb_health_check_path    = "/v1/sys/health?standbyok=true&perfstandbyok=true"
+  allowed_inbound_cidrs_lb  = ["0.0.0.0/0"]
+  block_device_mappings = [
+    {
+      device_name  = "/dev/sda1"
+      no_device    = "false"
+      virtual_name = "root"
+      ebs = {
+        encrypted             = false
+        volume_size           = 100
+        delete_on_termination = true
+        iops                  = 10000
+        kms_key_id            = null
+        snapshot_id           = null
+        volume_type           = "io2"
+        throughput            = null  #~for gp3, not valid for io2
+      }
+     }
+  ]
+
+  private_subnet_tags     = module.aws_vpc.private_subnet_tags
+  vpc_id                  = module.aws_vpc.vpc_id
+  secrets_manager_arn     = module.aws_acm.secrets_manager_arn
+  lb_certificate_arn      = module.aws_acm.lb_certificate_arn
+  leader_tls_servername   = module.aws_acm.leader_tls_servername
+}
+
+//bastion
+module "bastion" {
+  source = "../terraform-aws-vault-ent-starter-bastion"
+
+  bastion_count             = 2 #~node for benchmark-vault
+  telemetry_count           = 1 #~should only be 1
+  instance_type             = "t2.medium"
+  vault_version             = "1.10.0"
+  aws_region                = var.aws_region
+  resource_name_prefix      = var.resource_name_prefix
+  vpc_id                    = module.aws_vpc.vpc_id
+  public_subnet_tags        = module.aws_vpc.public_subnet_tags
+  vault_lb_sg_id            = module.aws_vault_ent.vault_lb_sg_id
+  secrets_manager_arn       = module.aws_acm.secrets_manager_arn
+  vault_lb_dns_name         = module.aws_vault_ent.vault_lb_dns_name
+  aws_iam_instance_profile  = module.aws_vault_ent.aws_iam_instance_profile
+}
