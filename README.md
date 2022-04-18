@@ -91,6 +91,14 @@ Prometheus needs the target IP's of the Vault nodes to metric scape. However, si
 ```
 sudo vi /etc/prometheus/prometheus.yml
 
+static_configs:
+- targets: ['${vault_lb_dns_name}:8200']  <-- REPLACE & RESTART PROMETHEUS CONTAINER
+
+restart:
+sudo docker restart prometheus
+
+example:
+
 scrape_configs:
   - job_name: 'vault'
     metrics_path: '/v1/sys/metrics'
@@ -103,14 +111,7 @@ scrape_configs:
       cert_file: /etc/prometheus/vault-cert.pem
       key_file: /etc/prometheus/vault-key.pem
     static_configs:
-            - targets: ['52.55.232.154:8200','10.0.82.20:8200','10.0.49.203:8200']
-static_configs:
-- targets: ['${vault_lb_dns_name}:8200']  <-- REPLACE & RESTART PROMETHEUS CONTAINER
-
-
-restart:
-sudo docker restart prometheus
-ssh -i awskey.pem ubuntu@ec2-44-204-11-117.compute-1.amazonaws.com sudo docker restart grafana
+            - targets: ['10.0.18.120:8200','10.0.82.20:8200','10.0.49.203:8200']
 ```
 ```
 grafana:
