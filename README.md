@@ -77,7 +77,6 @@ vault_lb_dns_name = "internal-rchao-vault-lb-859430941.us-east-1.elb.amazonaws.c
 ```
 ```
 ssh example:
-
 ssh -i awskey.pem ubuntu@ec2-44-202-146-149.compute-1.amazonaws.com
 ```
 <br>
@@ -98,7 +97,6 @@ restart:
 sudo docker restart prometheus
 
 example:
-
 scrape_configs:
   - job_name: 'vault'
     metrics_path: '/v1/sys/metrics'
