@@ -85,13 +85,19 @@ ssh -i awskey.pem ubuntu@ec2-44-202-146-149.compute-1.amazonaws.com
 
 Prometheus needs the target IP's of the Vault nodes to metric scape. However, since the cluster is deployed as an ASG there are [no IPs](https://github.com/hashicorp/terraform-provider-aws/issues/511)  or Instance IDs known to Terraform.
 
-*Note:* Update the `prometheus.yml` configuration file with the Vault node IPs after deployed and restart Prometheus container on the telemetry node.
+*Note:* The `prometheus.yml` configuration may need updating with the Vault node correct IPs after deployed. If so, restart the Prometheus container on the telemetry node after updating.
 
 ```
+fetch instance ips:
+for x in $(aws --output text --query "AutoScalingGroups[0].Instances[*].InstanceId" autoscaling describe-auto-scaling-groups --auto-scaling-group-names rchao-vault --region us-east-1);
+do
+echo $(aws --region us-east-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=$x" --query 'Reservations[*].Instances[*].[PrivateIpAddress]' --output text):8200;
+done
+
 sudo vi /etc/prometheus/prometheus.yml
 
 static_configs:
-- targets: ['${vault_lb_dns_name}:8200']  <-- REPLACE & RESTART PROMETHEUS CONTAINER
+- targets: ['']  <-- REPLACE & RESTART PROMETHEUS CONTAINER
 
 restart:
 sudo docker restart prometheus
