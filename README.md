@@ -88,7 +88,7 @@ Prometheus needs the target IP's of the Vault nodes to metric scape. However, si
 *Note:* The `prometheus.yml` configuration may need updating with the Vault node correct IPs after deployed. If so, restart the Prometheus container on the telemetry node after updating.
 
 ```
-fetch instance ips:
+fetch instance ips (replace --region & --auto-scaling-group-names):
 for x in $(aws --output text --query "AutoScalingGroups[0].Instances[*].InstanceId" autoscaling describe-auto-scaling-groups --auto-scaling-group-names rchao-vault --region us-east-1);
 do
 echo $(aws --region us-east-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=$x" --query 'Reservations[*].Instances[*].[PrivateIpAddress]' --output text):8200,;
