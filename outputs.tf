@@ -3,11 +3,11 @@ output "vault_lb_dns_name" {
   value       = module.aws_vault_ent.vault_lb_dns_name
 }
 
-output "bastion_public_ip" {
+output "benchmark_public_ip" {
   value       = module.bastion.bastion_public_ip
 }
 
-output "bastion_public_dns" {
+output "benchmark_public_dns" {
   value       = module.bastion.bastion_public_dns
 }
 
@@ -30,7 +30,7 @@ Prometheus:
 http://${module.bastion.telemetry_public_ip[0]}:9090)}
 ssh -i awskey.pem ubuntu@ec2-44-192-39-223.compute-1.amazonaws.com sudo docker restart prometheus
 
-Bastion:
+Benchmark:
 ssh -i awskey.pem ubuntu@${element(module.bastion.*.bastion_public_ip, 0)}
 
 Telemetry:

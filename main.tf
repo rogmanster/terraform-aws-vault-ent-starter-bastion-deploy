@@ -36,13 +36,13 @@ module "aws_vault_ent" {
       virtual_name = "root"
       ebs = {
         encrypted             = false
-        volume_size           = 4000
+        volume_size           = 1000
         delete_on_termination = true
         iops                  = 10000
         kms_key_id            = null
         snapshot_id           = null
         volume_type           = "io2"
-        throughput            = 1000 
+        throughput            = null #~valid for gp2/gp3
       }
      }
   ]

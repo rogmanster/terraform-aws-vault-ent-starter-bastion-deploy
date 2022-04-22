@@ -52,18 +52,18 @@ vault operator init -address='https://localhost:8200' -key-shares=1 -key-thresho
 ```
 <br>
 
-## Bastion
+## Benchmarking
 
-*Note:* You'll need to `scp` benchmark-vault to the bastion nodes.
+*Note:* You'll need to `scp` benchmark-vault to the benchmarking nodes.
 
 ```
-output of two bastion and one telemetry node(s):
+output of two benchmarking and one telemetry node(s):
 
-bastion_public_dns = [
+benchmarking_public_dns = [
   "ec2-44-202-146-149.compute-1.amazonaws.com",
   "ec2-52-5-113-185.compute-1.amazonaws.com",
 ]
-bastion_public_ip = [
+benchmarking_public_ip = [
   "44.202.146.149",
   "52.5.113.185",
 ]
