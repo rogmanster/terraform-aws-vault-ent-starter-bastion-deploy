@@ -28,7 +28,9 @@ module "aws_vault_ent" {
   node_count              = "5"
   vault_version           = "1.9.4" #~1.10.0 not working apt-get install -y vault-enterprise=${vault_version}+ent
   lb_health_check_path    = "/v1/sys/health?standbyok=true&perfstandbyok=true"
-  allowed_inbound_cidrs_lb  = ["0.0.0.0/0"]
+  allowed_inbound_cidrs_lb   = ["0.0.0.0/0"]
+  allowed_inbound_cidrs_ssh  = ["0.0.0.0/0"]
+
   block_device_mappings = [
     {
       device_name  = "/dev/sda1"
@@ -52,15 +54,16 @@ module "aws_vault_ent" {
   secrets_manager_arn     = module.aws_acm.secrets_manager_arn
   lb_certificate_arn      = module.aws_acm.lb_certificate_arn
   leader_tls_servername   = module.aws_acm.leader_tls_servername
+  key_name                = module.bastion.key_name
 }
 
 //bastion
 module "bastion" {
   source = "github.com/rogmanster/terraform-aws-vault-ent-starter-bastion"
 
-  bastion_count             = 4 #~node for benchmark-vault
+  bastion_count             = 6 #~node for benchmark-vault
   telemetry_count           = 1 #~should only be 1
-  instance_type             = "m5.large"
+  instance_type             = "m5.4xlarge"
   vault_version             = "1.10.0"
   aws_region                = var.aws_region
   resource_name_prefix      = var.resource_name_prefix

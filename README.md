@@ -48,7 +48,7 @@ aws autoscaling describe-scaling-activities --auto-scaling-group-name rchao-vaul
 *Note:* Use session manager in the AWS console. Be sure to copy `root_token` in unseal.json. The additional Vaults nodes will auto join.
 ```
 sudo -i
-vault operator init -address='https://localhost:8200' -key-shares=1 -key-threshold=1 -format=json > unseal.json
+vault operator init -address='https://localhost:8200' -recovery-shares=1 -recovery-threshold=1 -format=json > unseal.json
 ```
 <br>
 
