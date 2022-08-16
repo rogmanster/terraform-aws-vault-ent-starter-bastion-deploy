@@ -62,8 +62,8 @@ module "aws_vault_ent" {
 module "bastion" {
   source = "github.com/rogmanster/terraform-aws-vault-ent-starter-bastion"
 
-  bastion_count             = 1 #~node for benchmark-vault
-  telemetry_count           = 3 #~should only be 1
+  bastion_count             = 5 #~node for benchmark-vault
+  telemetry_count           = 1 #~should only be 1
   instance_type             = "m5.large"
   vault_version             = "1.11.2"
   aws_region                = var.aws_region
