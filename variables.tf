@@ -12,3 +12,7 @@ variable "resource_name_prefix" {
 variable "aws_region" {
   description = "Bastion module requires region to generate bastion.tpl to fetch tls certs from ASM"
 }
+
+variable "lb_type" {
+  description = "Set as 'application' or 'network'. The L4 network option is needed cert auth which passes thru TLS to the Vault nodes themselves. "
+}
