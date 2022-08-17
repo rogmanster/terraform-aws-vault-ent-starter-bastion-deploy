@@ -25,12 +25,13 @@ module "aws_vault_ent" {
   resource_name_prefix    = var.resource_name_prefix
   vault_license_filepath  = "/Users/rogman/workspaces/working/terraform-aws-vault-ent-starter/license.hclic"
   instance_type           = "m5.large"
-  node_count              = "5"
+  node_count              = "3"
   #vault_version           = "1.9.4" #~1.10.0 not working apt-get install -y vault-enterprise=${vault_version}+ent
   vault_version           = "1.11.2+ent-1"
   lb_health_check_path    = "/v1/sys/health?standbyok=true&perfstandbyok=true"
   allowed_inbound_cidrs_lb   = ["0.0.0.0/0"]
   allowed_inbound_cidrs_ssh  = ["0.0.0.0/0"]
+  lb_type                 = var.lb_type
 
   block_device_mappings = [
     {
@@ -60,7 +61,7 @@ module "aws_vault_ent" {
 
 //bastion
 module "bastion" {
-  source = "github.com/rogmanster/terraform-aws-vault-ent-starter-bastion"
+  source = "github.com/rogmanster/terraform-aws-vault-ent-starter-bastion?ref=nlb"
 
   bastion_count             = 5 #~node for benchmark-vault
   telemetry_count           = 1 #~should only be 1
@@ -74,4 +75,5 @@ module "bastion" {
   secrets_manager_arn       = module.aws_acm.secrets_manager_arn
   vault_lb_dns_name         = module.aws_vault_ent.vault_lb_dns_name
   aws_iam_instance_profile  = module.aws_vault_ent.aws_iam_instance_profile
+  lb_type                   = var.lb_type
 }
